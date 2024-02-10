@@ -1,3 +1,11 @@
+"""
+TODO: 
+    - Daha cesitli bir sekilde sonuclari goster
+    - hepsinin tek bir metin haline getir
+    - Goruntu uzerinden bboxlari goster
+    - Dockerize et
+"""
+
 import streamlit as st
 from doctr.models import ocr_predictor
 from doctr.io import DocumentFile
