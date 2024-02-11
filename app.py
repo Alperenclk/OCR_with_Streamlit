@@ -8,7 +8,8 @@ TODO:
     + diger dosya tiplerini ekle
     + json dosyalarini upload et
     + url ekle
-    - url yazilarini guncelle
+    + url yazilarini guncelle
+    - medium yazisini hazirla
 """
 
 import json
@@ -108,7 +109,7 @@ def main():
         "Choose a File", type=["jpg", "jpeg", "png", "pdf"]
     )
 
-    st.write("#### Or Put an URL")
+    st.write("#### or Put an URL")
     url = st.text_input("Please type an URL:")
 
     if st.button("Show The URL"):
