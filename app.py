@@ -1,17 +1,18 @@
 """
 TODO: 
-    - Daha cesitli bir sekilde sonuclari goster
+    + Daha cesitli bir sekilde sonuclari goster
     + hepsinin tek bir metin haline getir
     - Goruntu uzerinden bboxlari goster
     - Dockerize et
     + zamanlayici ekle
-    - diger dosya tiplerini ekle
+    + diger dosya tiplerini ekle
     + json dosyalarini upload et
 """
 
-import base64
 import json
 import time
+import base64
+import PyPDF2
 import warnings
 from threading import Timer
 
@@ -40,71 +41,95 @@ def get_download_button(data, button_text, filename):
     return href
 
 
+def ocr(item):
+    model = ocr_predictor("db_resnet50", "crnn_vgg16_bn", pretrained=True)
+    result = model(item)
+    json_output = result.export()
+    return result, json_output
+
+
+def display(result, json_output):
+    st.write("#### Downoad Json output")
+    st.write("*⬇*" * 9)
+
+    # Button of Download JSON
+    download_button_str = get_download_button(json_output, "DOWNLOAD", "data.json")
+    st.markdown(download_button_str, unsafe_allow_html=True)
+    putMarkdown()
+
+    # Show the result image
+    synthetic_pages = result.synthesize()
+    # new_width = 680
+    # new_height = 960
+    # img = np.resize(synthetic_pages[0], (new_width, new_height, 3))
+    st.image(synthetic_pages, caption="Result of image")
+
+    elapsed_time = time.time() - start_time
+    putMarkdown()
+
+    # Show the results
+    whole_words = []
+    per_line_words = []
+    for block in json_output["pages"][0]["blocks"]:
+        for line in block["lines"]:
+            line_words = []
+            for word in line["words"]:
+                whole_words.append(word["value"])
+                line_words.append(word["value"])
+            per_line_words.append(line_words)
+
+    # Put the whole Words
+    st.write(f"## Whole Words:")
+    st.write(word + " " for word in whole_words)
+    putMarkdown()
+
+    # Put the Words line by line
+    st.write(f"## Line by Line:")
+    for lineWords in per_line_words:
+        st.write(word + " " for word in lineWords)
+    putMarkdown()
+
+    # Put the Words Word by Word
+    st.write(f"## Word by Word:")
+    for index, item in enumerate(whole_words):
+        st.write(f"**Word {index}**:", item)
+    putMarkdown()
+
+    st.write(f"Successful! Passed Time: {elapsed_time:.2f} seconds")
+
+
 def main():
     global start_time, seconds_elapsed, stop_time
 
     # Uploading an image file
-    uploaded_file = st.file_uploader("Resim Seçin", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader(
+        "Choose a File", type=["jpg", "jpeg", "png", "pdf"]
+    )
 
-    if uploaded_file is not None:
+    st.write("### OR Put an URL")
+    url = st.text_input("Lütfen bir URL girin:")
+
+    if st.button("URL'yi Göster"):
+        st.write("Girilen URL:", url)
+        start_time = time.time()
+
+        single_img_doc = DocumentFile.from_url(url)
+        result, json_output = ocr(single_img_doc)
+        display(result, json_output)
+
+    elif uploaded_file is not None:
         # start timer
         start_time = time.time()
 
-        image = uploaded_file.read()
+        if uploaded_file.type == "application/pdf":
+            pdf = uploaded_file.read()
+            single_img_doc = DocumentFile.from_pdf(pdf)
+        else:
+            image = uploaded_file.read()
+            single_img_doc = DocumentFile.from_images(image)
 
-        model = ocr_predictor("db_resnet50", "crnn_vgg16_bn", pretrained=True)
-        single_img_doc = DocumentFile.from_images(image)
-
-        result = model(single_img_doc)
-        json_output = result.export()
-
-        st.write("### Downoad Json output")
-        st.write("**⬇**" * 9)
-
-        # Button of Download JSON
-        download_button_str = get_download_button(json_output, "DOWNLOAD", "data.json")
-        st.markdown(download_button_str, unsafe_allow_html=True)
-        putMarkdown()
-
-        # Show the result image
-        synthetic_pages = result.synthesize()
-        # new_width = 680
-        # new_height = 960
-        # img = np.resize(synthetic_pages[0], (new_width, new_height, 3))
-        st.image(synthetic_pages, caption="Result of image")
-
-        elapsed_time = time.time() - start_time
-        putMarkdown()
-
-        # Show the results
-        whole_words = []
-        per_line_words = []
-        for block in json_output["pages"][0]["blocks"]:
-            for line in block["lines"]:
-                line_words = []
-                for word in line["words"]:
-                    whole_words.append(word["value"])
-                    line_words.append(word["value"])
-                per_line_words.append(line_words)
-
-        # Put the whole Words
-        st.write(f"## Whole Words:")
-        st.write(word + " " for word in whole_words)
-        putMarkdown()
-
-        # Put the Words line by line
-        st.write(f"## Line by Line:")
-        for lineWords in per_line_words:
-            st.write(word + " " for word in lineWords)
-        putMarkdown()
-
-        # Put the Words Word by Word
-        st.write(f"## Word by Word:")
-        for index, item in enumerate(whole_words):
-            st.write(f"**Word {index}**:", item)
-        putMarkdown()
-
-        st.write(f"Successful! Passed Time: {elapsed_time:.2f} seconds")
+        result, json_output = ocr(single_img_doc)
+        display(result, json_output)
 
 
 if __name__ == "__main__":
