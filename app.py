@@ -7,6 +7,8 @@ TODO:
     + zamanlayici ekle
     + diger dosya tiplerini ekle
     + json dosyalarini upload et
+    + url ekle
+    - url yazilarini guncelle
 """
 
 import json
