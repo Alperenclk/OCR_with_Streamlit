@@ -50,7 +50,7 @@ def ocr(item):
     return result, json_output
 
 
-def display(result, json_output):
+def display(result, json_output, img):
     st.write("#### Downoad Json output")
     st.write("*⬇*" * 9)
 
@@ -60,10 +60,10 @@ def display(result, json_output):
     putMarkdown()
 
     # Show the result image
+    st.image(img, caption="Original image")
+    putMarkdown()
+
     synthetic_pages = result.synthesize()
-    # new_width = 680
-    # new_height = 960
-    # img = np.resize(synthetic_pages[0], (new_width, new_height, 3))
     st.image(synthetic_pages, caption="Result of image")
 
     elapsed_time = time.time() - start_time
@@ -108,11 +108,11 @@ def main():
         "Choose a File", type=["jpg", "jpeg", "png", "pdf"]
     )
 
-    st.write("### OR Put an URL")
-    url = st.text_input("Lütfen bir URL girin:")
+    st.write("#### Or Put an URL")
+    url = st.text_input("Please type an URL:")
 
-    if st.button("URL'yi Göster"):
-        st.write("Girilen URL:", url)
+    if st.button("Show The URL"):
+        st.write("Typed URL:", url)
         start_time = time.time()
 
         single_img_doc = DocumentFile.from_url(url)
@@ -124,14 +124,14 @@ def main():
         start_time = time.time()
 
         if uploaded_file.type == "application/pdf":
-            pdf = uploaded_file.read()
-            single_img_doc = DocumentFile.from_pdf(pdf)
+            image = uploaded_file.read()
+            single_img_doc = DocumentFile.from_pdf(image)
         else:
             image = uploaded_file.read()
             single_img_doc = DocumentFile.from_images(image)
 
         result, json_output = ocr(single_img_doc)
-        display(result, json_output)
+        display(result, json_output, image)
 
 
 if __name__ == "__main__":
