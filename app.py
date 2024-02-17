@@ -1,17 +1,3 @@
-"""
-TODO: 
-    + Daha cesitli bir sekilde sonuclari goster
-    + hepsinin tek bir metin haline getir
-    - Goruntu uzerinden bboxlari goster
-    - Dockerize et
-    + zamanlayici ekle
-    + diger dosya tiplerini ekle
-    + json dosyalarini upload et
-    + url ekle
-    + url yazilarini guncelle
-    - medium yazisini hazirla
-"""
-
 import json
 import time
 import base64
