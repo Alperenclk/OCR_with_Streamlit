@@ -17,7 +17,24 @@ streamlit run .\app.py
 ```bash
 python -m venv env
 ```
-
+### Step 2 Activate Virtual Environment
+```bash
+.\venv\Scripts\activate
+```
+### Step 3 Download DockTr library
+```bash
+pip install python-doctr
+pip install "python-doctr[torch]"
+```
+### Step 4 Download Streamlit library
+```bash
+pip install streamlit
+```
+### Step 4 Download PyPDF2 library
+```bash
+pip install PyPDF2
+```
+### Or you can just use this command
 ```bash
 pip install requirements.txt
 ```
