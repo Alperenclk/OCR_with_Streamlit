@@ -7,13 +7,34 @@ https://medium.com/@alperenclk/exploring-optical-character-recognition-ocr-with-
 ## Usage
 
 ```Bash
-usage: streamlit run .\app.py
+streamlit run .\app.py
 
 ```
 
 
 ## Installation
-
+### Step 1 Create a Virtual Environment
+```bash
+python -m venv env
+```
+### Step 2 Activate Virtual Environment
+```bash
+.\venv\Scripts\activate
+```
+### Step 3 Download DockTr library
+```bash
+pip install python-doctr
+pip install "python-doctr[torch]"
+```
+### Step 4 Download Streamlit library
+```bash
+pip install streamlit
+```
+### Step 4 Download PyPDF2 library
+```bash
+pip install PyPDF2
+```
+### Or you can just use this command
 ```bash
 pip install requirements.txt
 ```
