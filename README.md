@@ -7,12 +7,16 @@ https://medium.com/@alperenclk/exploring-optical-character-recognition-ocr-with-
 ## Usage
 
 ```Bash
-usage: streamlit run .\app.py
+streamlit run .\app.py
 
 ```
 
 
 ## Installation
+### Step 1 Create a Virtual Environment
+```bash
+python -m venv env
+```
 
 ```bash
 pip install requirements.txt
